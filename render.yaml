@@ -1,0 +1,15 @@
+# Render – backend (API) only. Deploy this repo and set root directory to apps/api.
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: drama-tracker-api
+    runtime: node
+    rootDir: apps/api
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      # Add in Render dashboard: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, JWT_SECRET, TMDB_ACCESS_TOKEN, FRONTEND_URL

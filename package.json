@@ -1,0 +1,20 @@
+{
+  "name": "drama-tracker",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w @drama-tracker/api\" \"npm run dev -w @drama-tracker/web\"",
+    "dev:api": "npm run dev -w @drama-tracker/api",
+    "dev:web": "npm run dev -w @drama-tracker/web",
+    "build": "npm run build -w @drama-tracker/api && npm run build -w @drama-tracker/web",
+    "build:api": "npm run build -w @drama-tracker/api",
+    "build:web": "npm run build -w @drama-tracker/web",
+    "start": "npm run start -w @drama-tracker/api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

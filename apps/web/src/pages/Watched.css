@@ -1,0 +1,21 @@
+.watched-page .page-subtitle {
+  margin-bottom: 1.5rem;
+}
+
+.page-status {
+  color: var(--text-muted);
+}
+
+.page-status a {
+  font-weight: 500;
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: rgba(201, 74, 74, 0.15);
+}
