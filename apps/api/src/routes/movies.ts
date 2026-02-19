@@ -102,8 +102,23 @@ moviesRouter.get("/trending", async (req, res) => {
 
     const r = await fetch(url, { headers: getTmdbHeaders() });
     if (!r.ok) return res.status(r.status).json({ error: "TMDB request failed" });
-    const data = await r.json();
-    const results = (data.results || []).map((m: any) => ({
+    const data = (await r.json()) as {
+      page?: number;
+      total_pages?: number;
+      total_results?: number;
+      results?: Array<{
+        id: number;
+        title?: string;
+        name?: string;
+        media_type?: string;
+        overview?: string;
+        biography?: string;
+        poster_path?: string;
+        backdrop_path?: string;
+        vote_average?: number;
+      }>;
+    };
+    const results = (data.results || []).map((m) => ({
       id: m.id,
       title: m.title ?? m.name,
       media_type: m.media_type ?? media,
@@ -131,7 +146,7 @@ moviesRouter.get("/genres", async (req, res) => {
     const url = `${TMDB_BASE}/genre/${media}/list?language=en-US`;
     const r = await fetch(url, { headers: getTmdbHeaders() });
     if (!r.ok) return res.status(r.status).json({ error: "TMDB request failed" });
-    const data = await r.json();
+    const data = (await r.json()) as { genres: Array<{ id: number; name: string }> };
     await cacheSet(cacheKey, data, CACHE_TTL_MOVIE);
     res.json(data);
   } catch (e) {
@@ -154,7 +169,14 @@ moviesRouter.get("/person/:id", async (req, res) => {
       if (r.status === 404) return res.status(404).json({ error: "Person not found" });
       return res.status(r.status).json({ error: "TMDB request failed" });
     }
-    const p = await r.json();
+    const p = (await r.json()) as {
+      id: number;
+      name: string;
+      biography?: string;
+      birthday?: string;
+      profile_path?: string;
+      known_for?: unknown;
+    };
     const payload = {
       id: p.id,
       name: p.name,
@@ -184,7 +206,18 @@ moviesRouter.get("/tv/:id", async (req, res) => {
       if (r.status === 404) return res.status(404).json({ error: "TV not found" });
       return res.status(r.status).json({ error: "TMDB request failed" });
     }
-    const t = await r.json();
+    const t = (await r.json()) as {
+      id: number;
+      name: string;
+      overview?: string;
+      first_air_date?: string;
+      poster_path?: string;
+      backdrop_path?: string;
+      vote_average?: number;
+      vote_count?: number;
+      genres?: Array<{ id: number; name: string }>;
+      seasons?: unknown[];
+    };
     const payload = {
       id: t.id,
       name: t.name,
