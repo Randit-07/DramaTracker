@@ -144,13 +144,13 @@ export default function PlaylistDetail() {
                 <li key={u.id}>
                   <span>{u.name || u.email}</span>
                   <button
-                    type="button"
-                    className="btn-sm btn-accent"
-                    onClick={() => addMember(u.id)}
-                    disabled={addingFriend}
-                  >
-                    Add
-                  </button>
+                      type="button"
+                      className="btn-sm btn-accent"
+                      onClick={(e) => { e.stopPropagation(); addMember(u.id); }}
+                      disabled={addingFriend}
+                    >
+                      Add
+                    </button>
                 </li>
               ))}
             </ul>
@@ -188,11 +188,12 @@ export default function PlaylistDetail() {
               <MovieCard
                 key={movie.id}
                 movie={movie}
+                onClick={() => window.location.href = `/movie/${movie.id}`}
                 actions={
                   <button
                     type="button"
                     className="btn-sm btn-accent"
-                    onClick={() => addMovie(movie)}
+                    onClick={(e) => { e.stopPropagation(); addMovie(movie); }}
                     disabled={addingMovieId === movie.id}
                   >
                     {addingMovieId === movie.id ? "Adding…" : "Add"}
@@ -216,11 +217,26 @@ export default function PlaylistDetail() {
                 movie={{ id: m.movieId }}
                 title={m.title}
                 posterPath={m.posterPath}
+                onClick={async () => {
+                  // navigate to movie or tv detail
+                  try {
+                    await (await import("../api")).movies.get(m.movieId);
+                    window.location.href = `/movie/${m.movieId}`;
+                    return;
+                  } catch (e) {}
+                  try {
+                    await (await import("../api")).movies.getTv(m.movieId);
+                    window.location.href = `/tv/${m.movieId}`;
+                    return;
+                  } catch (e) {
+                    window.location.href = `/movie/${m.movieId}`;
+                  }
+                }}
                 actions={
                   <button
                     type="button"
                     className="btn-sm btn-danger"
-                    onClick={() => removeMovie(m.movieId)}
+                    onClick={(e) => { e.stopPropagation(); removeMovie(m.movieId); }}
                   >
                     Remove
                   </button>

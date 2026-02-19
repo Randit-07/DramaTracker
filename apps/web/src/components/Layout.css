@@ -7,17 +7,20 @@
 .header {
   display: flex;
   align-items: center;
-  gap: 2rem;
-  padding: 1rem 2rem;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(90deg, rgba(0,0,0,0.6), rgba(0,0,0,0.2));
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  backdrop-filter: blur(6px);
 }
 
 .logo {
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.4rem;
+  font-weight: 800;
   color: var(--accent);
 }
 
@@ -27,38 +30,45 @@
 
 .nav {
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
+  margin-left: 1rem;
 }
 
 .nav a {
-  color: var(--text-muted);
-  font-weight: 500;
+  color: rgba(255,255,255,0.8);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.35rem 0.45rem;
 }
 
 .nav a:hover,
 .nav a.active {
   color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 6px;
 }
 
 .header-user {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .user-name {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  display: none; /* hide name for compact header */
 }
 
 .btn-logout {
   background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-  padding: 0.4rem 0.8rem;
-  border-radius: var(--radius);
+  border: none;
+  color: var(--text);
+  padding: 0.25rem;
+  border-radius: 6px;
   font-size: 0.9rem;
+  opacity: 0.9;
 }
 
 .btn-logout:hover {
@@ -68,10 +78,23 @@
 
 .main {
   flex: 1;
-  padding: 2rem;
-  max-width: 1200px;
+  padding: 2rem 1.25rem;
+  max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+}
+
+/* small avatar */
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  font-weight: 700;
 }
 
 .loading-screen {

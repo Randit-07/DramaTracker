@@ -117,215 +117,221 @@ export default function Recommendations() {
     <div className="recommendations-page">
       <h1 className="page-title">Recommendations</h1>
       <p className="page-subtitle">
-        Send movie recommendations to friends and see what they’ve sent you.
+        Share your favorite movies with friends and see what they recommend to you
       </p>
 
-      <section className="rec-section">
-        <h2>Send a recommendation</h2>
-        <form onSubmit={sendRecommendation} className="rec-form">
-          <div className="rec-form-row">
-            <label>
-              Friend
-              <div className="search-row">
-                <input
-                  type="text"
-                  value={userQuery}
-                  onChange={(e) => {
-                    setUserQuery(e.target.value);
-                    setSelectedUser(null);
-                  }}
-                  onFocus={searchUsers}
-                  placeholder="Search by email or name"
-                  className="search-input"
-                />
-                <button type="button" className="btn-secondary" onClick={searchUsers}>
-                  Search
-                </button>
-              </div>
-              {userResults.length > 0 && !selectedUser && (
-                <ul className="dropdown-results">
-                  {userResults.map((u) => (
-                    <li
-                      key={u.id}
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => {
-                        setSelectedUser(u);
-                        setUserQuery(u.name || u.email);
-                        setUserResults([]);
-                      }}
-                      onKeyDown={(e) =>
-                        e.key === "Enter" &&
-                        (setSelectedUser(u),
-                        setUserQuery(u.name || u.email),
-                        setUserResults([]))
-                      }
-                    >
-                      {u.name || u.email}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {selectedUser && (
-                <span className="selected-tag">
-                  → {selectedUser.name || selectedUser.email}{" "}
-                  <button
-                    type="button"
-                    className="btn-clear"
-                    onClick={() => {
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+        {/* Left: Send */}
+        <section className="rec-section">
+          <h2>Share with a friend</h2>
+          <form onSubmit={sendRecommendation} className="rec-form">
+            <div className="rec-form-row">
+              <label>
+                Friend
+                <div className="search-row">
+                  <input
+                    type="text"
+                    value={userQuery}
+                    onChange={(e) => {
+                      setUserQuery(e.target.value);
                       setSelectedUser(null);
-                      setUserQuery("");
                     }}
-                  >
-                    ×
+                    onFocus={searchUsers}
+                    placeholder="Search by email or name"
+                    className="search-input"
+                  />
+                  <button type="button" className="btn-secondary" onClick={searchUsers}>
+                    Search
                   </button>
-                </span>
-              )}
-            </label>
-          </div>
-          <div className="rec-form-row">
-            <label>
-              Movie
-              <div className="search-row">
+                </div>
+                {userResults.length > 0 && !selectedUser && (
+                  <ul className="dropdown-results">
+                    {userResults.map((u) => (
+                      <li
+                        key={u.id}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => {
+                          setSelectedUser(u);
+                          setUserQuery(u.name || u.email);
+                          setUserResults([]);
+                        }}
+                        onKeyDown={(e) =>
+                          e.key === "Enter" &&
+                          (setSelectedUser(u),
+                          setUserQuery(u.name || u.email),
+                          setUserResults([]))
+                        }
+                      >
+                        {u.name || u.email}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {selectedUser && (
+                  <span className="selected-tag">
+                    → {selectedUser.name || selectedUser.email}{" "}
+                    <button
+                      type="button"
+                      className="btn-clear"
+                      onClick={() => {
+                        setSelectedUser(null);
+                        setUserQuery("");
+                      }}
+                    >
+                      ×
+                    </button>
+                  </span>
+                )}
+              </label>
+            </div>
+            <div className="rec-form-row">
+              <label>
+                Movie
+                <div className="search-row">
+                  <input
+                    type="text"
+                    value={movieQuery}
+                    onChange={(e) => {
+                      setMovieQuery(e.target.value);
+                      setSelectedMovie(null);
+                    }}
+                    onFocus={searchMovies}
+                    placeholder="Search movies"
+                    className="search-input"
+                  />
+                  <button type="button" className="btn-secondary" onClick={searchMovies}>
+                    Search
+                  </button>
+                </div>
+                {movieResults.length > 0 && !selectedMovie && (
+                  <ul className="dropdown-results">
+                    {movieResults.slice(0, 5).map((m) => (
+                      <li
+                        key={m.id}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => {
+                          setSelectedMovie(m);
+                          setMovieQuery(m.title);
+                          setMovieResults([]);
+                        }}
+                        onKeyDown={(e) =>
+                          e.key === "Enter" &&
+                          (setSelectedMovie(m),
+                          setMovieQuery(m.title),
+                          setMovieResults([]))
+                        }
+                      >
+                        {m.title}
+                        {m.release_date && ` (${m.release_date.slice(0, 4)})`}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {selectedMovie && (
+                  <span className="selected-tag">
+                    → {selectedMovie.title}{" "}
+                    <button
+                      type="button"
+                      className="btn-clear"
+                      onClick={() => {
+                        setSelectedMovie(null);
+                        setMovieQuery("");
+                      }}
+                    >
+                      ×
+                    </button>
+                  </span>
+                )}
+              </label>
+            </div>
+            <div className="rec-form-row">
+              <label>
+                Message <span className="optional">(optional)</span>
                 <input
                   type="text"
-                  value={movieQuery}
-                  onChange={(e) => {
-                    setMovieQuery(e.target.value);
-                    setSelectedMovie(null);
-                  }}
-                  onFocus={searchMovies}
-                  placeholder="Search movies"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Why you recommend it…"
                   className="search-input"
                 />
-                <button type="button" className="btn-secondary" onClick={searchMovies}>
-                  Search
-                </button>
-              </div>
-              {movieResults.length > 0 && !selectedMovie && (
-                <ul className="dropdown-results">
-                  {movieResults.slice(0, 5).map((m) => (
-                    <li
-                      key={m.id}
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => {
-                        setSelectedMovie(m);
-                        setMovieQuery(m.title);
-                        setMovieResults([]);
-                      }}
-                      onKeyDown={(e) =>
-                        e.key === "Enter" &&
-                        (setSelectedMovie(m),
-                        setMovieQuery(m.title),
-                        setMovieResults([]))
-                      }
-                    >
-                      {m.title}
-                      {m.release_date && ` (${m.release_date.slice(0, 4)})`}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {selectedMovie && (
-                <span className="selected-tag">
-                  → {selectedMovie.title}{" "}
-                  <button
-                    type="button"
-                    className="btn-clear"
-                    onClick={() => {
-                      setSelectedMovie(null);
-                      setMovieQuery("");
-                    }}
-                  >
-                    ×
-                  </button>
-                </span>
-              )}
-            </label>
-          </div>
-          <div className="rec-form-row">
-            <label>
-              Message <span className="optional">(optional)</span>
-              <input
-                type="text"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Why you recommend it…"
-                className="search-input"
-              />
-            </label>
-          </div>
-          <button
-            type="submit"
-            className="btn-primary"
-            disabled={sending || !selectedUser || !selectedMovie}
-          >
-            {sending ? "Sending…" : "Send recommendation"}
-          </button>
-        </form>
-      </section>
+              </label>
+            </div>
+            <button
+              type="submit"
+              className="btn-cta"
+              disabled={sending || !selectedUser || !selectedMovie}
+            >
+              {sending ? "Sending…" : "Share"}
+            </button>
+          </form>
+        </section>
 
-      <section className="rec-section">
-        <h2>Received</h2>
-        {received.length === 0 ? (
-          <p className="page-status">No recommendations yet.</p>
-        ) : (
-          <div className="rec-list">
-            {received.map((r) => (
-              <div
-                key={r.id}
-                className={`rec-card ${r.readAt ? "read" : ""}`}
-              >
-                <div className="rec-card-poster">
-                  {r.posterPath ? (
-                    <img src={r.posterPath} alt={r.title} />
-                  ) : (
-                    <div className="movie-card-placeholder">No poster</div>
-                  )}
-                </div>
-                <div className="rec-card-body">
-                  <h3>{r.title}</h3>
-                  <p className="rec-from">
-                    From {r.fromUser?.name || r.fromUser?.email}
-                  </p>
-                  {r.message && <p className="rec-message">{r.message}</p>}
-                  <div className="rec-actions">
-                    <Link to={`/search?q=${encodeURIComponent(r.title || "")}`}>
-                      Find similar
-                    </Link>
-                    {!r.readAt && (
-                      <button
-                        type="button"
-                        className="btn-sm btn-accent"
-                        onClick={() => markRead(r.id)}
-                      >
-                        Mark as read
-                      </button>
+        {/* Right: Received */}
+        <section className="rec-section">
+          <h2>Your recommendations</h2>
+          {received.length === 0 ? (
+            <p className="page-status">No recommendations yet.</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {received.map((r) => (
+                <div
+                  key={r.id}
+                  className={`rec-card ${r.readAt ? "read" : ""}`}
+                  style={{ background: r.readAt ? 'rgba(255,255,255,0.01)' : 'linear-gradient(90deg, rgba(229,9,20,0.08), transparent)', padding: '1rem', borderRadius: '10px' }}
+                >
+                  <div className="rec-card-poster">
+                    {r.posterPath ? (
+                      <img src={r.posterPath} alt={r.title} />
+                    ) : (
+                      <div className="movie-card-placeholder">No poster</div>
                     )}
                   </div>
+                  <div className="rec-card-body">
+                    <h3>{r.title}</h3>
+                    <p className="rec-from">
+                      💌 From {r.fromUser?.name || r.fromUser?.email}
+                    </p>
+                    {r.message && <p className="rec-message">"{r.message}"</p>}
+                    <div className="rec-actions">
+                      <Link to={`/search?q=${encodeURIComponent(r.title || "")}`}>
+                        View similar
+                      </Link>
+                      {!r.readAt && (
+                        <button
+                          type="button"
+                          className="btn-sm btn-accent"
+                          onClick={() => markRead(r.id)}
+                        >
+                          👁 Mark as read
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
+
+      {sent.length > 0 && (
+        <section className="rec-section" style={{ marginTop: '2rem' }}>
+          <h2>Your shares ({sent.length})</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '0.75rem' }}>
+            {sent.map((r) => (
+              <div key={r.id} style={{ background: 'rgba(255,255,255,0.01)', padding: '0.75rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ fontWeight: '600', marginBottom: '0.25rem' }}>{r.title}</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
+                  → {r.toUser?.name || r.toUser?.email}
+                </div>
+                {r.message && <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>"{r.message}"</div>}
               </div>
             ))}
           </div>
-        )}
-      </section>
-
-      <section className="rec-section">
-        <h2>Sent</h2>
-        {sent.length === 0 ? (
-          <p className="page-status">You haven’t sent any yet.</p>
-        ) : (
-          <ul className="sent-list">
-            {sent.map((r) => (
-              <li key={r.id}>
-                <strong>{r.title}</strong> → {r.toUser?.name || r.toUser?.email}
-                {r.message && `: "${r.message}"`}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+        </section>
+      )}
     </div>
   );
 }

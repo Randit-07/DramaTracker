@@ -50,3 +50,16 @@ usersRouter.get("/me", (req, res) => {
   const authReq = req as unknown as AuthRequest;
   res.json({ user: authReq.user });
 });
+
+// Get user profile by id (requires auth)
+usersRouter.get("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { data: userRow, error } = await supabase.from("users").select("id, name").eq("id", id).single();
+    if (error || !userRow) return res.status(404).json({ error: "User not found" });
+    res.json({ user: { id: userRow.id, name: userRow.name } });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Failed to load user" });
+  }
+});

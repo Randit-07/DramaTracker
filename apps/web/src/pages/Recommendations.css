@@ -178,3 +178,12 @@
 .sent-list strong {
   color: var(--text);
 }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .recommendations-page > div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+  .rec-section h2 { font-size: 1rem; }
+}

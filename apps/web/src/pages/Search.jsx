@@ -1,20 +1,23 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { movies as moviesApi, watched as watchedApi } from "../api";
 import { useAuth } from "../context/AuthContext";
 import MovieCard from "../components/MovieCard";
+import PlaylistBulkAddButton from "../components/PlaylistBulkAddButton";
 import "./Search.css";
 
 export default function Search() {
   const [searchParams] = useSearchParams();
   const qFromUrl = searchParams.get("q") ?? "";
   const [query, setQuery] = useState(qFromUrl);
+  const [type, setType] = useState("movie");
   const [results, setResults] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const [addingId, setAddingId] = useState(null);
   const { getToken } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (qFromUrl) setQuery(qFromUrl);
@@ -38,7 +41,10 @@ export default function Search() {
     if (!query.trim()) return;
     setLoading(true);
     try {
-      const data = await moviesApi.search(query.trim(), 1);
+      let data;
+      if (type === "movie") data = await moviesApi.search(query.trim(), 1);
+      else if (type === "tv") data = await moviesApi.searchTv(query.trim(), 1);
+      else data = await moviesApi.searchPeople(query.trim(), 1);
       setResults(data.results || []);
       setPage(1);
       setTotalPages(data.total_pages || 0);
@@ -55,7 +61,10 @@ export default function Search() {
     if (!query.trim() || page >= totalPages || loading) return;
     setLoading(true);
     try {
-      const data = await moviesApi.search(query.trim(), page + 1);
+      let data;
+      if (type === "movie") data = await moviesApi.search(query.trim(), page + 1);
+      else if (type === "tv") data = await moviesApi.searchTv(query.trim(), page + 1);
+      else data = await moviesApi.searchPeople(query.trim(), page + 1);
       setResults((prev) => [...prev, ...(data.results || [])]);
       setPage((p) => p + 1);
     } catch (err) {
@@ -84,8 +93,13 @@ export default function Search() {
 
   return (
     <div className="search-page">
-      <h1 className="page-title">Search movies</h1>
+      <h1 className="page-title">Search</h1>
       <form onSubmit={handleSearch} className="search-form">
+        <select value={type} onChange={(e) => setType(e.target.value)} style={{ marginRight: 8 }}>
+          <option value="movie">Movies</option>
+          <option value="tv">TV Series</option>
+          <option value="person">People</option>
+        </select>
         <input
           type="search"
           value={query}
@@ -110,22 +124,34 @@ export default function Search() {
               <MovieCard
                 key={movie.id}
                 movie={movie}
+                onClick={() => {
+                  if (type === "movie") navigate(`/movie/${movie.id}`);
+                  else if (type === "tv") navigate(`/tv/${movie.id}`);
+                  else navigate(`/person/${movie.id}`);
+                }}
                 actions={
-                  <button
-                    type="button"
-                    className="btn-sm btn-accent"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addToWatched(movie);
-                    }}
-                    disabled={addingId === movie.id}
-                  >
-                    {addingId === movie.id ? "Adding…" : "Add to watched"}
-                  </button>
+                  type === "movie" ? (
+                    <button
+                      type="button"
+                      className="btn-sm btn-accent"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addToWatched(movie);
+                      }}
+                      disabled={addingId === movie.id}
+                    >
+                      {addingId === movie.id ? "Adding…" : "Add to watched"}
+                    </button>
+                  ) : null
                 }
               />
             ))}
           </div>
+            <div style={{ marginTop: 12 }}>
+                  {type !== 'person' && (
+                    <PlaylistBulkAddButton results={results} />
+                  )}
+            </div>
           {page < totalPages && (
             <div className="load-more">
               <button

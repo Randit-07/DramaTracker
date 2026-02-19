@@ -1,4 +1,3 @@
-// In production (Vercel), set VITE_API_URL to your Render API origin (e.g. https://your-api.onrender.com)
 const API =
   import.meta.env.VITE_API_URL && import.meta.env.MODE === "production"
     ? `${String(import.meta.env.VITE_API_URL).replace(/\/$/, "")}/api`
@@ -32,6 +31,17 @@ export const auth = {
 export const movies = {
   search: (q, page = 1) => api(`/movies/search?q=${encodeURIComponent(q)}&page=${page}`),
   get: (id) => api(`/movies/${id}`),
+  
+  searchTv: (q, page = 1) => api(`/movies/search?q=${encodeURIComponent(q)}&page=${page}&type=tv`),
+  getTv: (id) => api(`/movies/tv/${id}`),
+  
+  searchPeople: (q, page = 1) => api(`/movies/search?q=${encodeURIComponent(q)}&page=${page}&type=person`),
+  getPerson: (id) => api(`/movies/person/${id}`),
+
+  trending: (media = "movie", genre = "", page = 1) => api(`/movies/trending?media=${encodeURIComponent(media)}&genre=${encodeURIComponent(genre)}&page=${page}`),
+  genres: (media = "movie") => api(`/movies/genres?media=${encodeURIComponent(media)}`),
+  videos: (id) => api(`/movies/${id}/videos`),
+  tvVideos: (id) => api(`/movies/tv/${id}/videos`),
 };
 
 export function watched(token) {

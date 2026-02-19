@@ -12,13 +12,16 @@ export default function Layout() {
           DramaTracker
         </NavLink>
         <nav className="nav">
-          <NavLink to="/search">Search</NavLink>
+          <NavLink to="/search">Browse</NavLink>
+          <NavLink to="/trending">Trending</NavLink>
           <NavLink to="/watched">Watched</NavLink>
           <NavLink to="/playlists">Playlists</NavLink>
           <NavLink to="/recommendations">Recommendations</NavLink>
         </nav>
         <div className="header-user">
-          <span className="user-name">{user?.name || user?.email}</span>
+          <NavLink to={user ? `/users/${user.id}` : "/login"} className="avatar" title={user?.name || user?.email}>
+            {user?.name ? user.name.split(" ").map(s=>s[0]).slice(0,2).join("") : (user?.email?.[0] ?? "U")}
+          </NavLink>
           <button type="button" className="btn-logout" onClick={logout}>
             Log out
           </button>

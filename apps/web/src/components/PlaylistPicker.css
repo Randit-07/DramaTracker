@@ -1,0 +1,25 @@
+.picker-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+.picker {
+  background: var(--bg-card);
+  padding: 1rem;
+  border-radius: 10px;
+  width: 380px;
+  max-width: calc(100% - 24px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+.picker h3 { margin: 0 0 0.5rem; }
+.picker-list { max-height: 240px; overflow: auto; display: flex; flex-direction: column; gap: 0.25rem; }
+.picker-item { text-align: left; padding: 0.5rem; background: transparent; border: 1px solid rgba(255,255,255,0.03); color: var(--text); border-radius: 8px; display:flex; justify-content:space-between; align-items:center; }
+.picker-item:hover { background: rgba(255,255,255,0.02); }
+.picker-create { display:flex; gap:0.5rem; margin-top:0.5rem; }
+.picker-create input { flex:1; padding:0.45rem; border-radius:6px; border:1px solid rgba(255,255,255,0.04); background:var(--bg-elevated); color:var(--text); }
+.picker-create button { padding:0.45rem 0.7rem; border-radius:6px; }
+.picker-empty, .picker-loading { color:var(--text-muted); padding:0.5rem; }

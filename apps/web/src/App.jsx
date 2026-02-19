@@ -9,6 +9,11 @@ import Watched from "./pages/Watched";
 import Playlists from "./pages/Playlists";
 import PlaylistDetail from "./pages/PlaylistDetail";
 import Recommendations from "./pages/Recommendations";
+import MovieDetail from "./pages/MovieDetail";
+import TVDetail from "./pages/TVDetail";
+import PersonDetail from "./pages/PersonDetail";
+import Trending from "./pages/Trending";
+import UserProfile from "./pages/UserProfile";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -32,6 +37,11 @@ export default function App() {
       >
         <Route index element={<Dashboard />} />
         <Route path="search" element={<Search />} />
+        <Route path="trending" element={<Trending />} />
+        <Route path="movie/:id" element={<MovieDetail />} />
+        <Route path="tv/:id" element={<TVDetail />} />
+        <Route path="person/:id" element={<PersonDetail />} />
+        <Route path="users/:id" element={<UserProfile />} />
         <Route path="watched" element={<Watched />} />
         <Route path="playlists" element={<Playlists />} />
         <Route path="playlists/:id" element={<PlaylistDetail />} />

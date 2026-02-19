@@ -34,8 +34,15 @@ const app = express();
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
 // Log incoming requests for easier debugging (dev + prod)
-app.use((req, _res, next) => {
-  logger.info(`${req.method} ${req.originalUrl}`);
+// Structured request logging: method, url, status, latency, user id when available
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on("finish", () => {
+    const latency = Date.now() - start;
+    const status = res.statusCode;
+    const userId = (req as any).user?.id || null;
+    logger.info(`${req.method} ${req.originalUrl}`, { status, latency, userId });
+  });
   next();
 });
 

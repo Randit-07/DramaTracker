@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { watched as watchedApi } from "../api";
 import { useAuth } from "../context/AuthContext";
 import MovieCard from "../components/MovieCard";
@@ -43,6 +43,27 @@ export default function Watched() {
     }
   }
 
+  const navigate = useNavigate();
+
+  async function goToDetails(id) {
+    // try movie then tv
+    try {
+      await (await import("../api")).movies.get(id);
+      navigate(`/movie/${id}`);
+      return;
+    } catch (e) {
+      // try tv
+    }
+    try {
+      await (await import("../api")).movies.getTv(id);
+      navigate(`/tv/${id}`);
+      return;
+    } catch (e) {
+      // fallback
+      navigate(`/movie/${id}`);
+    }
+  }
+
   if (loading) return <p className="page-status">Loading your watched list…</p>;
 
   return (
@@ -60,11 +81,12 @@ export default function Watched() {
               movie={{ id: entry.movieId, release_date: null, vote_average: null }}
               title={entry.title}
               posterPath={entry.posterPath}
+              onClick={() => goToDetails(entry.movieId)}
               actions={
                 <button
                   type="button"
                   className="btn-sm btn-danger"
-                  onClick={() => remove(entry.movieId)}
+                  onClick={(e) => { e.stopPropagation(); remove(entry.movieId); }}
                   disabled={removingId === entry.movieId}
                 >
                   {removingId === entry.movieId ? "Removing…" : "Remove"}
