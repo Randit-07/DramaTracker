@@ -64,3 +64,25 @@ export function getConfig(): ApiConfig {
   };
   return cached;
 }
+
+/**
+ * Optional helper to log a summary of the loaded config.  This used to run
+ * automatically at module load time, but that caused the file to access
+ * `process.env` before `dotenv` was invoked in `index.ts` (ESM imports are
+ * hoisted).  When the API starts without real environment variables the
+ * validation would throw before `.env` had been parsed, so we make the log
+ * explicit now.
+ */
+export function logConfig(): void {
+  const cfg = getConfig();
+  console.log("Loaded config:", {
+    port: cfg.port,
+    nodeEnv: cfg.nodeEnv,
+    corsOrigins: cfg.corsOrigins,
+    jwtSecret: cfg.jwtSecret,
+    supabaseUrl: cfg.supabaseUrl ? "configured" : "missing",
+    supabaseServiceKey: cfg.supabaseServiceKey,
+    tmdbAccessToken: cfg.tmdbAccessToken,
+    redisUrl: cfg.redisUrl ? "configured" : "missing",
+  });
+}
