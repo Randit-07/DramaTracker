@@ -17,6 +17,7 @@ export default function Recommendations() {
   const [userQuery, setUserQuery] = useState("");
   const [userResults, setUserResults] = useState([]);
   const [movieQuery, setMovieQuery] = useState("");
+  const [movieType, setMovieType] = useState("multi");
   const [movieResults, setMovieResults] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedMovie, setSelectedMovie] = useState(null);
@@ -60,8 +61,21 @@ export default function Recommendations() {
   async function searchMovies() {
     if (!movieQuery.trim()) return;
     try {
-      const data = await moviesApi.search(movieQuery.trim(), 1);
-      setMovieResults(data.results || []);
+      let results = [];
+      
+      if (movieType === "multi" || movieType === "movie") {
+        const data = await moviesApi.search(movieQuery.trim(), 1);
+        results = [...(data.results || [])];
+      }
+      
+      if (movieType === "multi" || movieType === "tv") {
+        const data = await moviesApi.searchTv(movieQuery.trim(), 1);
+        results = [...results, ...(data.results || [])];
+      }
+      
+      // Remove duplicates and limit
+      const uniqueResults = Array.from(new Map(results.map(item => [item.id, item])).values());
+      setMovieResults(uniqueResults.slice(0, 10));
     } catch (err) {
       setMovieResults([]);
     }
@@ -77,15 +91,17 @@ export default function Recommendations() {
       await recsApi(token).send({
         toUserId: selectedUser.id,
         movieId: selectedMovie.id,
-        title: selectedMovie.title,
+        title: selectedMovie.title || selectedMovie.name,
         posterPath: selectedMovie.poster_path,
         message: message.trim() || undefined,
+        mediaType: selectedMovie.media_type || (selectedMovie.first_air_date ? 'tv' : 'movie'),
       });
       setSelectedUser(null);
       setSelectedMovie(null);
       setMessage("");
       setUserQuery("");
       setMovieQuery("");
+      setMovieType("multi");
       setUserResults([]);
       setMovieResults([]);
       load();
@@ -187,7 +203,19 @@ export default function Recommendations() {
             </div>
             <div className="rec-form-row">
               <label>
-                Movie
+                Movie or TV Show
+                <div className="search-row">
+                  <select className="search-input" value={movieType} onChange={(e) => setMovieType(e.target.value)}>
+                    <option value="multi">Both Movies & TV</option>
+                    <option value="movie">Movies only</option>
+                    <option value="tv">TV Shows only</option>
+                  </select>
+                </div>
+              </label>
+            </div>
+            <div className="rec-form-row">
+              <label>
+                Title
                 <div className="search-row">
                   <input
                     type="text"
@@ -197,7 +225,7 @@ export default function Recommendations() {
                       setSelectedMovie(null);
                     }}
                     onFocus={searchMovies}
-                    placeholder="Search movies"
+                    placeholder="Search movies or TV shows"
                     className="search-input"
                   />
                   <button type="button" className="btn-secondary" onClick={searchMovies}>
@@ -213,25 +241,27 @@ export default function Recommendations() {
                         tabIndex={0}
                         onClick={() => {
                           setSelectedMovie(m);
-                          setMovieQuery(m.title);
+                          setMovieQuery(m.title || m.name);
                           setMovieResults([]);
                         }}
                         onKeyDown={(e) =>
                           e.key === "Enter" &&
                           (setSelectedMovie(m),
-                          setMovieQuery(m.title),
+                          setMovieQuery(m.title || m.name),
                           setMovieResults([]))
                         }
                       >
-                        {m.title}
-                        {m.release_date && ` (${m.release_date.slice(0, 4)})`}
+                        <div className="dropdown-item-title">{m.title || m.name}</div>
+                        <div className="dropdown-item-meta">
+                          {m.release_date ? ` (${m.release_date.slice(0, 4)})` : m.first_air_date ? ` (${m.first_air_date.slice(0, 4)})` : ''}
+                        </div>
                       </li>
                     ))}
                   </ul>
                 )}
                 {selectedMovie && (
                   <span className="selected-tag">
-                    → {selectedMovie.title}{" "}
+                    → {selectedMovie.title || selectedMovie.name}{" "}
                     <button
                       type="button"
                       className="btn-clear"

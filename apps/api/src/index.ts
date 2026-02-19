@@ -22,6 +22,7 @@ const rateLimit = (await import("express-rate-limit")).default;
 const { getConfig, logConfig } = await import("./config.js");
 const { authRouter } = await import("./routes/auth.js");
 const { moviesRouter } = await import("./routes/movies.js");
+const { animeRouter } = await import("./routes/anime.js");
 const { watchedRouter } = await import("./routes/watched.js");
 const { playlistsRouter } = await import("./routes/playlists.js");
 const { recommendationsRouter } = await import("./routes/recommendations.js");
@@ -76,6 +77,7 @@ app.use((err: unknown, _req: import("express").Request, res: import("express").R
 
 app.use("/api/auth", authRouter);
 app.use("/api/movies", moviesRouter);
+app.use("/api/anime", animeRouter);
 app.use("/api/watched", watchedRouter);
 app.use("/api/playlists", playlistsRouter);
 app.use("/api/recommendations", recommendationsRouter);

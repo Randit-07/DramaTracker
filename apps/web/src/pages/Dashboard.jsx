@@ -4,7 +4,7 @@ import MovieCard from "../components/MovieCard";
 import SkeletonCard from "../components/SkeletonCard";
 import { movies as moviesApi } from "../api";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -12,6 +12,8 @@ export default function Dashboard() {
   const [trendingTV, setTrendingTV] = useState([]);
   const [loadingMovies, setLoadingMovies] = useState(false);
   const [loadingTV, setLoadingTV] = useState(false);
+  const moviesScrollRef = useRef(null);
+  const tvScrollRef = useRef(null);
 
   useEffect(() => {
     let mounted = true;
@@ -35,6 +37,16 @@ export default function Dashboard() {
     } catch (e) { navigate(`/movie/${id}`); }
   }
 
+  const scroll = (ref, direction) => {
+    if (ref.current) {
+      const scrollAmount = 200;
+      const newScrollLeft = direction === 'left' 
+        ? ref.current.scrollLeft - scrollAmount 
+        : ref.current.scrollLeft + scrollAmount;
+      ref.current.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="dashboard">
       <section className="hero">
@@ -54,11 +66,28 @@ export default function Dashboard() {
 
       <section className="rows">
         <div>
-          <div className="row-title">Trending Movies</div>
-          <div className="row-inner" tabIndex={0} onKeyDown={(e) => {
-            const el = e.currentTarget;
-            if (e.key === 'ArrowRight') el.scrollBy({ left: 180, behavior: 'smooth' });
-            if (e.key === 'ArrowLeft') el.scrollBy({ left: -180, behavior: 'smooth' });
+          <div className="row-header">
+            <div className="row-title">Trending Movies</div>
+            <div className="row-controls">
+              <button 
+                className="btn-nav" 
+                onClick={() => scroll(moviesScrollRef, 'left')}
+                aria-label="Scroll left"
+              >
+                ← Previous
+              </button>
+              <button 
+                className="btn-nav" 
+                onClick={() => scroll(moviesScrollRef, 'right')}
+                aria-label="Scroll right"
+              >
+                Next →
+              </button>
+            </div>
+          </div>
+          <div className="row-inner" ref={moviesScrollRef} tabIndex={0} onKeyDown={(e) => {
+            if (e.key === 'ArrowRight') scroll(moviesScrollRef, 'right');
+            if (e.key === 'ArrowLeft') scroll(moviesScrollRef, 'left');
           }}>
             {loadingMovies ? (
               Array.from({ length: 8 }).map((_, i) => <div key={i} style={{ minWidth: 160 }}><SkeletonCard /></div>)
@@ -73,11 +102,28 @@ export default function Dashboard() {
         </div>
 
         <div>
-          <div className="row-title">Trending TV</div>
-          <div className="row-inner" tabIndex={0} onKeyDown={(e) => {
-            const el = e.currentTarget;
-            if (e.key === 'ArrowRight') el.scrollBy({ left: 180, behavior: 'smooth' });
-            if (e.key === 'ArrowLeft') el.scrollBy({ left: -180, behavior: 'smooth' });
+          <div className="row-header">
+            <div className="row-title">Trending TV</div>
+            <div className="row-controls">
+              <button 
+                className="btn-nav" 
+                onClick={() => scroll(tvScrollRef, 'left')}
+                aria-label="Scroll left"
+              >
+                ← Previous
+              </button>
+              <button 
+                className="btn-nav" 
+                onClick={() => scroll(tvScrollRef, 'right')}
+                aria-label="Scroll right"
+              >
+                Next →
+              </button>
+            </div>
+          </div>
+          <div className="row-inner" ref={tvScrollRef} tabIndex={0} onKeyDown={(e) => {
+            if (e.key === 'ArrowRight') scroll(tvScrollRef, 'right');
+            if (e.key === 'ArrowLeft') scroll(tvScrollRef, 'left');
           }}>
             {loadingTV ? (
               Array.from({length:8}).map((_,i)=> <div key={i} style={{ minWidth: 160 }}><SkeletonCard /></div>)

@@ -14,6 +14,7 @@ export default function Layout() {
         <nav className="nav">
           <NavLink to="/search">Browse</NavLink>
           <NavLink to="/trending">Trending</NavLink>
+          <NavLink to="/anime">Anime</NavLink>
           <NavLink to="/watched">Watched</NavLink>
           <NavLink to="/playlists">Playlists</NavLink>
           <NavLink to="/recommendations">Recommendations</NavLink>

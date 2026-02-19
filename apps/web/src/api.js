@@ -44,6 +44,13 @@ export const movies = {
   tvVideos: (id) => api(`/movies/tv/${id}/videos`),
 };
 
+export const anime = {
+  search: (q, page = 1) => api(`/anime/search?q=${encodeURIComponent(q)}&page=${page}`),
+  trending: (page = 1) => api(`/anime/trending?page=${page}`),
+  getInfo: (id) => api(`/anime/${id}/info`),
+  getEpisodes: (id) => api(`/anime/${id}/episodes`),
+};
+
 export function watched(token) {
   return {
     list: () => api("/watched", {}, token),
