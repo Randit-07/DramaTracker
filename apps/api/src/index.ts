@@ -1,6 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
+import type { CorsOptions } from "cors";
 
 // Load .env from apps/api/ before touching anything that might read it.  We
 // can’t rely on the usual static import order because ESM imports are
@@ -40,7 +41,7 @@ app.use(
   })
 );
 
-const corsOptions: cors.CorsOptions = {
+const corsOptions: CorsOptions = {
   origin:
     config.corsOrigins.length > 0
       ? config.corsOrigins
