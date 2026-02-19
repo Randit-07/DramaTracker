@@ -2,6 +2,7 @@ import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { supabase } from "../db.js";
 import { signToken } from "../middleware/auth.js";
+import { logger } from "../logger.js";
 
 export const authRouter = Router();
 
@@ -24,7 +25,7 @@ authRouter.post("/register", async (req, res) => {
       .select("id, email, name")
       .single();
     if (error) {
-      console.error(error);
+      logger.error(error);
       res.status(500).json({ error: "Registration failed" });
       return;
     }
@@ -33,7 +34,7 @@ authRouter.post("/register", async (req, res) => {
     const token = signToken({ userId: user.id });
     res.status(201).json({ user, token });
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ error: "Registration failed" });
   }
 });
@@ -66,7 +67,7 @@ authRouter.post("/login", async (req, res) => {
       token,
     });
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ error: "Login failed" });
   }
 });

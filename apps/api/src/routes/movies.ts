@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { getConfig } from "../config.js";
 import { cacheGet, cacheSet } from "../cache.js";
+import { logger } from "../logger.js";
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
 const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
@@ -71,7 +72,7 @@ moviesRouter.get("/search", async (req, res) => {
     await cacheSet(cacheKey, payload, CACHE_TTL_SEARCH);
     res.json(payload);
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ error: e instanceof Error ? e.message : "Search failed" });
   }
 });
@@ -123,7 +124,7 @@ moviesRouter.get("/:id", async (req, res) => {
     await cacheSet(cacheKey, payload, CACHE_TTL_MOVIE);
     res.json(payload);
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ error: e instanceof Error ? e.message : "Failed to fetch movie" });
   }
 });

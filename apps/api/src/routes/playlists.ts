@@ -2,6 +2,7 @@ import { Router } from "express";
 import { requireAuth } from "../middleware/auth.js";
 import { supabase } from "../db.js";
 import type { AuthRequest } from "../types.js";
+import { logger } from "../logger.js";
 
 export const playlistsRouter = Router();
 playlistsRouter.use(requireAuth as import("express").RequestHandler);
@@ -84,7 +85,7 @@ playlistsRouter.get("/", async (req, res) => {
     playlists.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     res.json({ playlists });
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ error: "Failed to load playlists" });
   }
 });
@@ -113,7 +114,7 @@ playlistsRouter.post("/", async (req, res) => {
     const full = await getPlaylistWithDetails(pl.id);
     res.status(201).json(full ?? playlist);
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ error: "Failed to create playlist" });
   }
 });
@@ -146,7 +147,7 @@ playlistsRouter.get("/:id", async (req, res) => {
     }
     res.json(playlist);
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ error: "Failed to load playlist" });
   }
 });
@@ -181,7 +182,7 @@ playlistsRouter.post("/:id/members", async (req, res) => {
     const updated = await getPlaylistWithDetails(playlist.id);
     res.json(updated);
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ error: "Failed to add member" });
   }
 });
@@ -235,7 +236,7 @@ playlistsRouter.post("/:id/movies", async (req, res) => {
     if (error) throw error;
     res.status(201).json(movie);
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ error: "Failed to add movie" });
   }
 });
@@ -271,7 +272,7 @@ playlistsRouter.delete("/:id/movies/:movieId", async (req, res) => {
       .eq("movie_id", movieId);
     res.status(204).send();
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ error: "Failed to remove movie" });
   }
 });

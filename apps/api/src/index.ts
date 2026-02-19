@@ -28,9 +28,16 @@ const { recommendationsRouter } = await import("./routes/recommendations.js");
 const { usersRouter } = await import("./routes/users.js");
 
 const config = getConfig();
+const { logger } = await import("./logger.js");
 const app = express();
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
+
+// Log incoming requests for easier debugging (dev + prod)
+app.use((req, _res, next) => {
+  logger.info(`${req.method} ${req.originalUrl}`);
+  next();
+});
 
 app.use(
   rateLimit({
@@ -54,6 +61,12 @@ app.use(cors(corsOptions));
 
 app.use(express.json({ limit: "256kb" }));
 
+// central error handler: log unexpected errors
+app.use((err: unknown, _req: import("express").Request, res: import("express").Response, _next: import("express").NextFunction) => {
+  logger.error(err as Error);
+  res.status(500).json({ error: "Internal server error" });
+});
+
 app.use("/api/auth", authRouter);
 app.use("/api/movies", moviesRouter);
 app.use("/api/watched", watchedRouter);
@@ -64,7 +77,7 @@ app.use("/api/users", usersRouter);
 app.get("/api/health", (_, res) => res.json({ ok: true }));
 
 app.listen(config.port, () => {
-  console.log(`DramaTracker API running on port ${config.port} (${config.nodeEnv})`);
-  console.log(`Supabase: ${config.supabaseUrl ? "configured" : "missing"}`);
-  console.log(`Redis cache: ${config.redisUrl ? "enabled" : "disabled (set REDIS_URL to enable)"}`);
+  logger.info(`DramaTracker API running on port ${config.port} (${config.nodeEnv})`);
+  logger.info(`Supabase: ${config.supabaseUrl ? "configured" : "missing"}`);
+  logger.info(`Redis cache: ${config.redisUrl ? "enabled" : "disabled (set REDIS_URL to enable)"}`);
 });

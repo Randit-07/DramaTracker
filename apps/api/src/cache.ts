@@ -24,11 +24,13 @@ async function getClient(): Promise<RedisLike | null> {
       const { default: Redis } = await import("ioredis");
       const RedisCtor = Redis as unknown as new (u: string, o?: object) => RedisLike;
       const c = new RedisCtor(url, { maxRetriesPerRequest: 2 });
-      c.on("error", (err: Error) => console.warn("[cache] Redis error:", err.message));
+      const { logger } = await import("./logger.js");
+      c.on("error", (err: Error) => logger.warn("[cache] Redis error: " + err.message));
       client = c;
       return c;
     } catch (e) {
-      console.warn("[cache] Redis connect failed:", e);
+      const { logger } = await import("./logger.js");
+      logger.warn("[cache] Redis connect failed:", e as Error);
       return null;
     } finally {
       clientPromise = null;

@@ -73,16 +73,16 @@ export function getConfig(): ApiConfig {
  * validation would throw before `.env` had been parsed, so we make the log
  * explicit now.
  */
-export function logConfig(): void {
+export async function logConfig(): Promise<void> {
   const cfg = getConfig();
-  console.log("Loaded config:", {
+  // use logger for structured output
+  // import lazily to avoid accidental hoisting issues in ESM
+  const { logger } = await import("./logger.js");
+  logger.info("Loaded config", {
     port: cfg.port,
     nodeEnv: cfg.nodeEnv,
     corsOrigins: cfg.corsOrigins,
-    jwtSecret: cfg.jwtSecret,
     supabaseUrl: cfg.supabaseUrl ? "configured" : "missing",
-    supabaseServiceKey: cfg.supabaseServiceKey,
-    tmdbAccessToken: cfg.tmdbAccessToken,
     redisUrl: cfg.redisUrl ? "configured" : "missing",
   });
 }

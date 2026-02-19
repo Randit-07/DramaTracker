@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { requireAuth } from "../middleware/auth.js";
 import { supabase } from "../db.js";
+import { logger } from "../logger.js";
 import type { AuthRequest } from "../types.js";
 
 export const watchedRouter = Router();
@@ -26,7 +27,7 @@ watchedRouter.get("/", async (req, res) => {
     }));
     res.json({ watched });
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ error: "Failed to load watched list" });
   }
 });
@@ -74,7 +75,7 @@ watchedRouter.post("/", async (req, res) => {
     const e = entry as { id: string; user_id: string; movie_id: number; title: string | null; poster_path: string | null; added_at: string };
     res.status(201).json({ id: e.id, userId: e.user_id, movieId: e.movie_id, title: e.title, posterPath: e.poster_path, addedAt: e.added_at });
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ error: "Failed to add to watched" });
   }
 });
@@ -94,7 +95,7 @@ watchedRouter.delete("/:movieId", async (req, res) => {
       .eq("movie_id", movieId);
     res.status(204).send();
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ error: "Failed to remove from watched" });
   }
 });

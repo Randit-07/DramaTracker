@@ -2,6 +2,7 @@ import { Router } from "express";
 import { requireAuth } from "../middleware/auth.js";
 import { supabase } from "../db.js";
 import type { AuthRequest } from "../types.js";
+import { logger } from "../logger.js";
 
 export const usersRouter = Router();
 usersRouter.use(requireAuth as import("express").RequestHandler);
@@ -40,7 +41,7 @@ usersRouter.get("/search", async (req, res) => {
     }
     res.json({ users });
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(500).json({ error: "Search failed" });
   }
 });

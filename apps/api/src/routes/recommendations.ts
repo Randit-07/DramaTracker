@@ -1,3 +1,4 @@
+import { logger } from "../logger.js";
 import { Router } from "express";
 import { requireAuth } from "../middleware/auth.js";
 import { supabase } from "../db.js";
@@ -36,7 +37,7 @@ recommendationsRouter.get("/received", async (req, res) => {
     }));
     res.json({ recommendations });
   } catch (e) {
-    console.error(e);
+      logger.error(e);
     res.status(500).json({ error: "Failed to load recommendations" });
   }
 });
@@ -69,7 +70,7 @@ recommendationsRouter.get("/sent", async (req, res) => {
     }));
     res.json({ recommendations });
   } catch (e) {
-    console.error(e);
+      logger.error(e);
     res.status(500).json({ error: "Failed to load sent recommendations" });
   }
 });
@@ -131,7 +132,7 @@ recommendationsRouter.post("/", async (req, res) => {
       toUser: toUserRow ?? undefined,
     });
   } catch (e) {
-    console.error(e);
+      logger.error(e);
     res.status(500).json({ error: "Failed to send recommendation" });
   }
 });
@@ -152,7 +153,7 @@ recommendationsRouter.patch("/:id/read", async (req, res) => {
     await supabase.from("recommendations").update({ read_at: new Date().toISOString() }).eq("id", rec.id);
     res.json({ ok: true });
   } catch (e) {
-    console.error(e);
+      logger.error(e);
     res.status(500).json({ error: "Failed to mark as read" });
   }
 });
