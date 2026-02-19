@@ -40,7 +40,7 @@ function getCorsOrigins(): string[] {
   if (!raw?.trim()) {
     return process.env.NODE_ENV === "production"
       ? []
-      : ["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173"];
+      : ["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173","https://drama-tracker-api.vercel.app"];
   }
   return raw.split(",").map((s) => s.trim()).filter(Boolean);
 }
